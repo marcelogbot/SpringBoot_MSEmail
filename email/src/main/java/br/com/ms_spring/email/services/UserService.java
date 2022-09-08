@@ -9,6 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import br.com.ms_spring.email.models.RoleModel;
@@ -22,16 +23,20 @@ import lombok.extern.slf4j.Slf4j;
 public class UserService implements UserDetailsService {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    RoleRepository roleRepository;
+    private RoleRepository roleRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public UserModel saveUser(UserModel userModel) {
         
         UserModel userFinded = userRepository.findByUserName(userModel.getUserName());
         if (userFinded == null) {
             log.info("New user save in database - "+userModel.getUserName());
+            userModel.setPassword(passwordEncoder.encode(userModel.getPassword()));
             return userRepository.save(userModel);
         } else {
             log.info("User already exists - "+userModel.getUserName());

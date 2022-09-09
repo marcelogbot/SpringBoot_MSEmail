@@ -43,12 +43,14 @@ public class UserService implements UserDetailsService {
         } else {
             log.info("User found" + userModel.getUserName());
         }
+
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
+
         userModel.getRoles().forEach(role -> {
             authorities.add(new SimpleGrantedAuthority(role.getName()));
         });
-        return new org.springframework.security.core
-        .userdetails.User(userModel.getUserName(), userModel.getPassword(), authorities);
+
+        return new org.springframework.security.core.userdetails.User(userModel.getUserName(), userModel.getPassword(), authorities);
     }
 
     public UserModel saveUser(UserModel userModel) {

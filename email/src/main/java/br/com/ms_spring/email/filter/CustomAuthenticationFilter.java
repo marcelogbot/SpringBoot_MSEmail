@@ -2,6 +2,8 @@ package br.com.ms_spring.email.filter;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.servlet.FilterChain;
@@ -19,12 +21,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
-    
+
     private final AuthenticationManager authenticationManager;
 
     public CustomAuthenticationFilter(AuthenticationManager authenticationManager) {
@@ -37,8 +37,8 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 
         String userName = request.getParameter("userName");
         String password = request.getParameter("password");
-        log.info("UserName is: {}",userName);
-        log.info("Password is: {}",password);
+        // log.info("UserName is: {}",userName);
+        // log.info("Password is: {}",password);
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userName, password);
         return authenticationManager.authenticate(authenticationToken);
 
@@ -50,7 +50,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 		
         User user = (User)authResult.getPrincipal();
         
-        Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
+        Algorithm algorithm = Algorithm.HMAC256("MSEmail1002".getBytes());
         
         String access_token = JWT.create()
                     .withSubject(user.getUsername())
@@ -65,8 +65,14 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                     .withIssuer(request.getRequestURL().toString())
                     .sign(algorithm);            
     
-        response.setHeader("access_token", access_token);
-        response.setHeader("refresh_token", refresh_token);
+        /* response.setHeader("access_token", access_token);
+        response.setHeader("refresh_token", refresh_token); */
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("access_token", access_token);
+        tokens.put("refresh_token", refresh_token);
+        response.setContentType(org.springframework.http.MediaType.APPLICATION_JSON_VALUE);
+        new ObjectMapper().writeValue(response.getOutputStream(), tokens);
+        
 	}
 
 }

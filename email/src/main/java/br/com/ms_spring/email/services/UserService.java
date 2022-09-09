@@ -41,7 +41,7 @@ public class UserService implements UserDetailsService {
             log.error("User not found");
             throw new UsernameNotFoundException("User not found");
         } else {
-            log.info("User found" + userModel.getUserName());
+            log.info("User found: " + userModel.getUserName());
         }
 
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();

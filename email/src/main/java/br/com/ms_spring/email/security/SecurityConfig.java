@@ -19,17 +19,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-         http//.httpBasic()
-        //     .and()
-        //     .authorizeRequests()
-        //     // .antMatchers(HttpMethod.GET, "/api/users").permitAll()
-        //     // .antMatchers(HttpMethod.POST, "/api/user/save").permitAll()
-        //     // .antMatchers(HttpMethod.POST, "/api/role/save").permitAll()
-        //     // .antMatchers(HttpMethod.POST, "/api/role/addToUser").permitAll()
-        //     .anyRequest().authenticated()
-        //     .and()
-        //     .csrf().disable()
-             .apply(customDsl());
+        
+         http.apply(customDsl());
 
         return http.build();
     }

@@ -47,7 +47,7 @@ public class UserService implements UserDetailsService {
             log.error("User not found");
             throw new UsernameNotFoundException("User not found");
         } else {
-            log.info("User found: " + userModel.getUserName());
+            log.info("User found: " + userModel.getUsername());
         }
 
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
@@ -56,17 +56,18 @@ public class UserService implements UserDetailsService {
             authorities.add(new SimpleGrantedAuthority(role.getName()));
         });
 
-        return new org.springframework.security.core.userdetails.User(userModel.getUserName(), userModel.getPassword(), authorities);
+        return new org.springframework.security.core.userdetails.User(userModel.getUsername(), userModel.getPassword(), authorities);
     }
 
     public String signUpUser(UserModel userModel) {
         
-        boolean userExists = (userRepository.findByUserName(userModel.getUserName()) != null
+        boolean userExists = (userRepository.findByUserName(userModel.getUsername()) != null
                              || userRepository.findByEmail(userModel.getEmail()) != null);
 
         if (userExists) {
             throw new IllegalStateException("User already exists!");
         }
+        
         userModel.setPassword(passwordEncoder.encode(userModel.getPassword()));
         userRepository.save(userModel);
 
@@ -78,20 +79,20 @@ public class UserService implements UserDetailsService {
             userModel
             );
         confirmationTokenService.saveConfirmationToken(confirmationTokenModel);
-        // TODO: Send email!
+
 
         return "Register ok!";
     }
 
     public UserModel saveUser(UserModel userModel) {
         
-        UserModel userFinded = userRepository.findByUserName(userModel.getUserName());
+        UserModel userFinded = userRepository.findByUserName(userModel.getUsername());
         if (userFinded == null) {
-            log.info("New user({}) save in database",userModel.getUserName());
+            log.info("New user({}) save in database",userModel.getUsername());
             userModel.setPassword(passwordEncoder.encode(userModel.getPassword()));
             return userRepository.save(userModel);
         } else {
-            log.info("User already exists - "+userModel.getUserName());
+            log.info("User already exists - "+userModel.getUsername());
             return userModel;
         }
     }

@@ -1,5 +1,7 @@
 package br.com.ms_spring.email.services;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 import br.com.ms_spring.email.models.ConfirmationTokenModel;
@@ -14,5 +16,10 @@ public class ConfirmationTokenService {
 
     public void saveConfirmationToken(ConfirmationTokenModel token) {
         confirmationTokenReposiroty.save(token);
+    }
+
+    public Optional<ConfirmationTokenModel> getToken(String token) {
+        
+        return confirmationTokenReposiroty.findByToken(token);
     }
 }

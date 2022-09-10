@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -47,14 +48,17 @@ public class UserService implements UserDetailsService {
             log.error("User not found");
             throw new UsernameNotFoundException("User not found");
         } else {
+            
             log.info("User found: " + userModel.getUsername());
+            if (!userModel.isEnabled()) {
+                throw new DisabledException("User is disable!");
+            }
         }
 
         Collection<SimpleGrantedAuthority> authorities = new ArrayList<>();
-
         userModel.getRoles().forEach(role -> {
             authorities.add(new SimpleGrantedAuthority(role.getName()));
-        });
+        });        
 
         return new org.springframework.security.core.userdetails.User(userModel.getUsername(), userModel.getPassword(), authorities);
     }
@@ -81,7 +85,7 @@ public class UserService implements UserDetailsService {
         confirmationTokenService.saveConfirmationToken(confirmationTokenModel);
 
 
-        return "Register ok!";
+        return tokenId;
     }
 
     public UserModel saveUser(UserModel userModel) {
@@ -132,5 +136,10 @@ public class UserService implements UserDetailsService {
     public List<UserModel> getAllUsers(){
         log.info("List all users.");
         return userRepository.findAll();
+    }
+
+    public void enableUserModel(UserModel userModel) {
+        userModel.setEnabled(true);
+        userRepository.save(userModel);
     }
 }

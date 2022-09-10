@@ -1,8 +1,10 @@
 package br.com.ms_spring.email.services;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.ms_spring.email.models.ConfirmationTokenModel;
 import br.com.ms_spring.email.models.RoleModel;
 import br.com.ms_spring.email.models.UserModel;
 import br.com.ms_spring.email.repositories.RoleRepository;
@@ -33,6 +36,9 @@ public class UserService implements UserDetailsService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private ConfirmationTokenService confirmationTokenService;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserModel userModel = userRepository.findByUserName(username);
@@ -51,6 +57,30 @@ public class UserService implements UserDetailsService {
         });
 
         return new org.springframework.security.core.userdetails.User(userModel.getUserName(), userModel.getPassword(), authorities);
+    }
+
+    public String signUpUser(UserModel userModel) {
+        
+        boolean userExists = (userRepository.findByUserName(userModel.getUserName()) != null
+                             || userRepository.findByEmail(userModel.getEmail()) != null);
+
+        if (userExists) {
+            throw new IllegalStateException("User already exists!");
+        }
+        userModel.setPassword(passwordEncoder.encode(userModel.getPassword()));
+        userRepository.save(userModel);
+
+        String tokenId = UUID.randomUUID().toString();
+        ConfirmationTokenModel confirmationTokenModel = new ConfirmationTokenModel( 
+            tokenId,
+            LocalDateTime.now(),
+            LocalDateTime.now().plusMinutes(15),
+            userModel
+            );
+        confirmationTokenService.saveConfirmationToken(confirmationTokenModel);
+        // TODO: Send email!
+
+        return "Register ok!";
     }
 
     public UserModel saveUser(UserModel userModel) {

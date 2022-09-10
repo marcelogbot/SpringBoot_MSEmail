@@ -6,4 +6,5 @@ import br.com.ms_spring.email.models.UserModel;
 
 public interface UserRepository extends JpaRepository<UserModel, Long> {
     UserModel findByUserName(String userName); 
+    UserModel findByEmail(String email); 
 }

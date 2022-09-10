@@ -31,8 +31,11 @@ public class UserModel implements Serializable {
     private String name;
     private String userName;
     private String password;
+    private String email;
     private LocalDateTime createDate;
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection<RoleModel> roles = new ArrayList<>();
+    private Boolean locked = false;
+    private Boolean enable = false;
     
 }

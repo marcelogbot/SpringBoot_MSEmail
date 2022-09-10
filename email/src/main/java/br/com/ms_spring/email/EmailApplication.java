@@ -10,13 +10,15 @@ public class EmailApplication {
 		SpringApplication.run(EmailApplication.class, args);
 	}
 
-	/* @Bean
+/* 	@Bean
 	CommandLineRunner run(UserService userService) {
 		return args -> {
 			userService.saveRole(new RoleModel(null,"ROLE_USER"));
 			userService.saveRole(new RoleModel(null,"ROLE_ADMIN"));
 			
-			userService.saveUser(new UserModel(null, "Marcelo Botelho", "marcelo", "1234", LocalDateTime.now(), new ArrayList<>()));
+			userService.saveUser(new UserModel(null, "Marcelo Botelho",
+											 "marcelo", "1234", "marcunb@gmail.com",
+											  LocalDateTime.now(), new ArrayList<>(), true, true));
 			
 			userService.addRoleToUser("marcelo", "ROLE_ADMIN");
 			userService.addRoleToUser("marcelo", "ROLE_USER");

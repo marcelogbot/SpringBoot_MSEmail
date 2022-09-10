@@ -17,17 +17,15 @@ import br.com.ms_spring.email.models.RoleModel;
 import br.com.ms_spring.email.models.UserModel;
 import br.com.ms_spring.email.services.UserService;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api")
-@RequiredArgsConstructor
 public class UserController {
 
     @Autowired
     private UserService userService;
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
+    @PreAuthorize("isAuthenticated()") 
     @GetMapping("/users")
     public ResponseEntity<List<UserModel>> getAllUsers() {
         return ResponseEntity.ok().body(userService.getAllUsers());

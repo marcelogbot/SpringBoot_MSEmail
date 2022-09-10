@@ -12,12 +12,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 import br.com.ms_spring.email.filter.CustomDsl;
-import lombok.RequiredArgsConstructor;
 
+@EnableWebSecurity
 @Configuration
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-@EnableWebSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
     
     @Bean

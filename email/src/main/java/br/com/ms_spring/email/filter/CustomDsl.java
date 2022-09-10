@@ -17,7 +17,7 @@ public class CustomDsl extends AbstractHttpConfigurer<CustomDsl, HttpSecurity> {
 		http.httpBasic()
             .and()
             .authorizeRequests()
-        	.antMatchers(HttpMethod.GET, "/api/login/**").permitAll()
+        	.antMatchers(HttpMethod.POST, "/api/login/**").permitAll()
 			// .antMatchers(HttpMethod.GET, "/api/users").permitAll()
             // .antMatchers(HttpMethod.POST, "/api/user/save").permitAll()
             // .antMatchers(HttpMethod.POST, "/api/role/save").permitAll()

@@ -6,6 +6,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 
 public class CustomDsl extends AbstractHttpConfigurer<CustomDsl, HttpSecurity> {
 
@@ -22,6 +23,14 @@ public class CustomDsl extends AbstractHttpConfigurer<CustomDsl, HttpSecurity> {
     	http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/user/save/**").hasAnyAuthority("ROLE_ADMIN");
 		http.authorizeRequests().anyRequest().authenticated();
 		http.formLogin();
+		http.logout(logout -> logout                                                
+			.logoutUrl("/api/logout")                                            
+			.logoutSuccessUrl("/api/login")                                      
+			.logoutSuccessHandler(new SimpleUrlLogoutSuccessHandler())                         
+			.invalidateHttpSession(true)                                        
+			//.addLogoutHandler(logoutHandler)                                    
+			.deleteCookies("dummyCookie")                                  
+		);
 	}
 
 	@Override
